@@ -11,7 +11,7 @@ SEARCH_URL = "https://usfweb.usf.edu/DSS/StaffScheduleSearch/StaffSearch/Results
 
 
 # Course titles to watch for
-WATCHLIST = ["Mobile Biometrics", "Human-Computer Interaction"]
+WATCHLIST = ["Mobile Biometrics", "Human-Computer Interaction","Cryptographic Hardware","Cryptographic Hardware & Embedded Systems"]
 
 # Form data (same as your payload)
 FORM_DATA = {
