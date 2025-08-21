@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import os
+from flask import Flask, jsonify
 
 # --- CONFIG ---
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
@@ -70,12 +71,27 @@ def check_courses():
         message = "✅ Course(s) Available:\n" + "\n".join(found)
         send_telegram_message(message)
         print(message)
+        return {"courses_found": found, "notified": True}
     else:
         print("No matching courses found.")
+        return {"courses_found": [], "notified": False}
 
-# Run every 10 minutes
-if __name__ == "__main__":
-    while True:
+app = Flask(__name__)
+
+@app.route('/')
+def health():
+    return jsonify({"status": "healthy", "service": "USF Class Watcher"})
+
+@app.route('/check', methods=['POST', 'GET'])
+def check_courses_endpoint():
+    try:
         print("Checking for course availability...")
-        check_courses()
-        time.sleep(60)  # 10 minutes
+        result = check_courses()
+        return jsonify({"status": "success", "message": "Course check completed"})
+    except Exception as e:
+        print(f"Error checking courses: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port, debug=False)
